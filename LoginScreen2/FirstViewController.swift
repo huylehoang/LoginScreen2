@@ -55,10 +55,9 @@ class FirstViewController: UIViewController {
         
             if (userInput == username && passInput == password) {
                 self.performSegue(withIdentifier: "moveToSecondVC", sender: self)
-            }else {
-                self.shouldPerformSegue(withIdentifier:"moveToSecondVC", sender: self)
             }
         }
+        self.shouldPerformSegue(withIdentifier:"moveToSecondVC", sender: self)
     }
 
 
