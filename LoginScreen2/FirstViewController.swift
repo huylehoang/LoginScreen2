@@ -70,11 +70,19 @@ class FirstViewController: UIViewController {
     
     override func shouldPerformSegue(withIdentifier: String?, sender: Any?) -> Bool {
         if withIdentifier == "moveToSecondVC" {
-            let alert = UIAlertController(title: "Something went wrong", message: "Please type again", preferredStyle:UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: "Wrong Username or Password", message: "Please type again", preferredStyle:UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            
+            let alert1 = UIAlertController(title: "Missing Username or Password", message: "Please type again", preferredStyle:UIAlertControllerStyle.alert)
+            alert1.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            
             for account in accounts {
-                if (txtUser.text!.isEmpty || txtPass.text!.isEmpty || txtUser.text! != account["username"]! || txtPass.text! != account["password"]!) {
-                    self.present(alert, animated: true, completion: nil)
+                if (txtUser.text!.isEmpty || txtPass.text!.isEmpty) {
+                    self.present(alert1, animated: true, completion: nil)
+                    return false
+                }
+                else if (txtUser.text! != account["username"]! || txtPass.text! != account["password"]!) {
+                    self.present(alert, animated: true, completion:nil)
                     return false
                 }
                 else {
