@@ -7,10 +7,14 @@
 //
 
 import UIKit
+import AFNetworking
+import Firebase
+import FirebaseDatabase
+import GoogleSignIn
 
-class FirstViewController: UIViewController {
-
-
+class FirstViewController: UIViewController, GIDSignInUIDelegate {
+    
+    
     @IBOutlet weak var txtUser: UITextField!
     
     @IBOutlet weak var txtPass: UITextField!
@@ -27,24 +31,23 @@ class FirstViewController: UIViewController {
         [ "username" : "hoang",
           "password" : "3"
         ],
-    ]
-
+        ]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        GIDSignIn.sharedInstance().uiDelegate = self
+//        GIDSignIn.sharedInstance().signIn()
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     @IBAction func btnDidClick(_ sender: Any) {
-        
-
-        
         
         let userInput = txtUser.text
         let passInput = txtPass.text
@@ -52,17 +55,20 @@ class FirstViewController: UIViewController {
         for account in accounts {
             let username = account["username"]!
             let password = account["password"]!
-        
+            
             if (userInput == username && passInput == password) {
                 self.performSegue(withIdentifier: "moveToSecondVC", sender: self)
             }
         }
         self.shouldPerformSegue(withIdentifier:"moveToSecondVC", sender: self)
     }
-
-
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "moveToSecondVC" {
+            let destination = segue.destination as! SecondViewController
+            destination.text2nd = txtUser.text
+        } else if segue.identifier == "SignIn" {
             let destination = segue.destination as! SecondViewController
             destination.text2nd = txtUser.text
         }
@@ -93,4 +99,19 @@ class FirstViewController: UIViewController {
         return true
     }
     
+    @IBAction func SignIn(_ sender: Any) {
+        
+        let alert3 = UIAlertController(title: "Cannot Sign In", message: "Please type again", preferredStyle:UIAlertControllerStyle.alert)
+        alert3.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+        
+        if let email = txtUser.text, let password = txtPass.text {
+            FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
+                if error == nil {
+                    self.performSegue(withIdentifier: "SignIn", sender: self)
+                } else {
+                    self.present(alert3, animated: true, completion:nil)
+                }
+            }
+        }
+    }
 }
